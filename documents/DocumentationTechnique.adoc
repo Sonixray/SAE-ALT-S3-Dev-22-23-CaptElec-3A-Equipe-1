@@ -1,0 +1,328 @@
+= *DOCUMENTATION TECHNIQUE*
+Hugo CASTELL, Loan GAYRARD, Paul ARAGO, Zakaria BELKHEIRI, Enzo BROUXEL
+v1.0 {localdate}
+:nofooter:
+:toc: left
+:toc-title: Sommaire
+
+NOTE: La catégorie "Implémentation" est dédiée à l'évolution du site
+
+== Installation locale ==
+
+Clônez le projet sur votre machine.
+
+=== Installation de NODEJS et des paquets ===
+
+Rendez-vous sur le https://nodejs.org/fr/[site de NodeJS] et installez la version recommandée.
+
+Nous sommes sur la version 18.13.0 LTS.
+
+Après l'installation, rendez-vous sur votre terminal (PowerShell si Windows) et vérifiez que tout est bien installé avec la commande :
+
+[source: sh]
+----
+npm --version
+----
+
+Si le terminal renvoie bien le numéro de version, continuez sinon consultez la documentation de NodeJS.
+
+Rendez-vous dans le dossier /code du projet avec votre terminal et exécutez la commande suivante qui installe les paquets requis du projet :
+
+[source: sh]
+----
+npm i
+----
+
+Une fois le téléchargement et l'installation terminés, continuez.
+
+=== Initialisation des variables d'environnement ===
+
+Le projet doit se connecter à une base de données et un flux MQTT.
+
+Il faut créer un fichier nommé '.env' situé à la source du dossier /code dans le but de spécifier les identifiants de connexion.
+
+[source: txt]
+----
+SQL_HOST="exemple.com"
+SQL_USER="userBDDExemple"
+SQL_PASSWORD="mdpUserExemple"
+SQL_DATABASE="nomDBExemple"
+MQTT_ENDPOINT="mqtt://chirpstack.iut-blagnac.fr"
+MQTT_TOPIC="application/1/device/+/event/+"
+
+AUTH_SECRETKEY="clé secrète de génération de token d'authentification"
+AUTH_LOGINS="username:password"
+----
+
+=== Explication de lancement et avertissements ===
+
+WARNING: Un seul serveur peut être lancé à la fois car lors de la réception d'une donnée MQTT, il peut y avoir duplication de clé primaire lors de l'insertion en base.
+
+Pour lancer le client et le serveur :
+[source: sh]
+----
+npm run dev
+----
+
+Pour lancer seulement le client (front) :
+[source: sh]
+----
+npm run client
+----
+
+Pour lancer seulement le serveur (back) :
+[source: sh]
+----
+npm run server
+----
+
+== Architecture ==
+
+L'architecture du projet suit la norme React.
+Pour en apprendre plus, vous pouvez suivre https://fr.reactjs.org/docs/thinking-in-react.html#step-1-break-the-ui-into-a-component-hierarchy[ce lien] en direction de la documentation de React.
+
+=== Base de données ===
+
+Nous fonctionnons avec une base de données MySQL hébergée sur le même serveur que celui du site web.
+
+image::img/diagramme-bdd-28-01-2023.png[]
+
+Le script de création de la base est disponible https://github.com/AimvenDragtow/SAE-ALT-S3-Dev-22-23-CaptElec-3A-Equipe-1/blob/main/database/create.sql[ici].
+
+=== Web ===
+
+==== Routage entre les pages ====
+
+Pour le routage entre les différents composants, parmi les plusieurs options qu'offre React Router DOM, nous avons choisi le routage Browser car il propose une architecture d'URL simple pour l'utilisateur.
+
+Accédez https://devdocs.io/react_router/routers/picking-a-router[ici] à la documentation du routage React pour connaître les différentes options proposées.
+
+==== Mise à jour des composants / web ====
+
+Les composants des pages principales, Live et Historique, intéragissent directement avec l'état (state) de la page en elle-même, ainsi la complexité reste dans la page et laisse l'implémentation simple.
+
+===== Navigation des SVG =====
+
+Les composants 3DViewElements et 3DViewContainer définissent la navigation dans les SVG grâce aux id des balises <g> contenues dans le code HTML.
+
+Nous avons suivi une nomenclature précise pour permettre une implémentation simple d'autres SVGs à venir ("IUT.BuildingB.Floor0")
+
+Lors de la construction de la page, les éléments sont chargés dans des objets qui définissent chacun un chemin :
+
+[source: jsx]
+----
+getElementRecursively(str, obj) {
+const path = str.split('.');
+const current = path.shift();
+if (current in obj) {
+    if (path.length) {
+        return this.getElementRecursively(path.join('.'), obj[current]);
+    }
+    return obj[current];
+}
+return null;
+}
+
+[...]
+
+const CurrentView3D = this.getElementRecursively(
+    location,
+    View3DElements
+);
+----
+
+La navigation est gérée dans le 3DViewContainer via le onClick ajouté aux éléments <g>:
+
+[source: jsx]
+----
+{/* AFFICHAGE 3D */}
+<View3DContainer
+    stroke="#000000"
+    fill="#838383"
+
+
+    viewNavigation={(e) => {
+        const id = e.currentTarget.id || null;
+        console.log('id', id);
+        if (id) {
+            console.log('ok');
+            this.setState((prevState) => ({
+                ...prevState,
+                location: id,
+            }));
+        }
+    }}
+
+
+    className="col-span-7 col-end-8"
+    setSelectedSalle={this.setSelectedSalle}
+>
+    <CurrentView3D />
+</View3DContainer>
+
+[... dans un fichier svg]
+
+g
+    id="BuildingB.Floor0"
+
+    onClick={viewNavigation}
+
+    style={{ display: 'inline', opacity: 1 }}
+    transform="matrix(0.377196, 0, 0, 0.377196, 198.253311, 1.104157)"
+>
+----
+
+===== Sélection d'une salle =====
+
+La sélection de salle fonctionne de la même manière que la navigation, via un transfert de fonction au travers du onClick :
+
+[source: jsx]
+----
+setSelectedSalle(event) {
+    const id = event.currentTarget.id || null;
+    this.setState({ selectedSalle: id });
+    console.log('selected -> ', id);
+}
+
+[...]
+
+<View3DContainer
+    stroke="#000000"
+    fill="#838383"
+    viewNavigation={(e) => {
+        const id = e.currentTarget.id || null;
+        console.log('id', id);
+        if (id) {
+            console.log('ok');
+            this.setState((prevState) => ({
+                ...prevState,
+                location: id,
+            }));
+        }
+    }}
+    className="col-span-7 col-end-8"
+
+    setSelectedSalle={this.setSelectedSalle}
+>
+    <CurrentView3D />
+</View3DContainer>
+
+[... dans un fichier svg]
+
+<g
+    id="rgt"
+    style={{ display: 'inline' }}
+    transform="matrix(1.073532, 0, 0, 1.073532, 71.160233, 22.490946)"
+    
+    onClick={setSelectedSalle}
+>
+----
+
+Une fois une salle sélectionnée, un composant 'DataPanel' va être affiché en prenant en paramètre la salle sélectionnée, qui est stockée dans le state de la page live et historique.
+De ce fait, en lisant les informations reçues par l'API, ce composant va afficher toutes les données de la salle voulue.
+
+[source: jsx]
+----
+{/* PANEL D'AFFICHAGE DES DONNEES */}
+<DataPanel
+    className="justify-center mx-[auto] mb-10"
+    selectedSalle={this.dataToDataPanel(selectedSalle)}
+/>
+----
+
+=== API ===
+
+Les requêtes de l'api sont écrites dans le fichier /code/server.js pour permettre aux données d'être récupérées sous format JSON via l'URL /api
+
+==== Récupération des données MQTT ====
+
+La récupération des données se fait à partir de /api/get-data/date/:date dns code/server.js :
+
+[source: javascript]
+----
+app.get('/api/get-data/date/:date', (req, res) => {
+
+    // Récupération de la date entrée en paramètre
+    const { date } = req.params;
+    console.log(date);
+
+    // Définition de la requête pour la récupération [ Peut être modifiée selon données voulues ]
+    const sqlQuery = `SELECT msue1.*, (SELECT batteryLevel from mqtt_stream_status_event msse where msse.sensorId = msue1.sensorId ORDER by dataDate DESC limit 1) as batteryLevel
+        from mqtt_stream_up_event msue1 
+        where (msue1.sensorId, msue1.dataDate) = (SELECT sensorId , dataDate 
+        from mqtt_stream_up_event msue2 
+        where msue2.sensorId = msue1.sensorId
+        and msue2.dataDate <= ?
+        ORDER BY dataDate DESC 
+        LIMIT 1)`;
+
+    // Exécution de la requête
+    sqlPool.query(sqlQuery, [date], (error, results) => {
+        if (error) throw error;
+        res.json(results);
+    });
+});
+----
+
+Dans le fichier database/get-data sont déjà programmées et commentées des requêtes de récupération de données.
+
+==== Insertion en base automatique ====
+
+Lorsque le site reçoit de nouvelles données de chirpstack.iut-blagnac.fr, alors il les insère automatiquement en base.
+
+== Implémentation ==
+
+=== Insertion d'un nouveau capteur ===
+
+Avant d'ajouter un capteur dans la base de données, il faut s'assurer que la localisation de ce capteur, c'est-à-dire la salle, existe dans la base de données. L'ensemble des localisations existantes sont stockées dans la table 'localisation'.
+Si la localisation de votre capteur n'existe pas, la requête suivante vous permettra de l'ajouter :
+----
+INSERT INTO `location` (`name`, `floor`, `parentLocation`) VALUES
+('B001', 0, 'Bâtiment B')
+----
+Dans cet exemple, on ajoute la salle B001, se trouvant au rez-de-chaussé (étage 0) du batîment B.
+Si l'étage ou le batîment sont inconnus, on pourra remplacer les valeurs par 'NULL'.
+
+Afin d'ajouter un nouveau capteur dans la base de données, on peut utiliser ce modèle de requête SQL : 
+----
+INSERT INTO `sensor` (`id`, `location`, `devEUI`) VALUES
+('AM107-10', 'B101', '24e124128c014516')
+----
+Dans cet exemple, on ajoute le capteur 'AM107-10', localisé dans la salle B101. Il est aussi nécessaire d'ajouter la valeur de DevEUI du capteur (ici 24e124128c014516).
+
+Pour la modification et la suppression, tout se passe en base de données, référez-vous au diagramme.
+
+=== Ajouter un svg ===
+
+Créez un composant react, voir dupliquer un existant, dans le dossier src/Components/3DViewElements en suivant la forme existante.
+
+Ajoutez un attribut onClick à tous les éléments html <g> :
+
+* Bâtiment : onClick={viewNavigation}
+* Etage avec salles : onClick={setSelectedSalle}
+
+Ajoutez les valeurs des propriétés dans une constante dans la fonction render :
+[source: javascript]
+----
+const { viewNavigation OU setSelectedSalle, stroke, fill } = this.props || null;
+----
+
+Et attribuez à chaque path les valeurs comme suit :
+[source: html]
+----
+<path
+    style={{
+        fill,
+        fillOpacity: 1,
+        stroke,
+        strokeWidth: '1px',
+        strokeLinecap: 'round',
+        strokeLinejoin: 'round',
+        strokeOpacity: 1,
+    }}
+    d="m 169.9924,595.59778 -0.2364,120.284 557.84916,178.00918 0.67504,-150.76213 z"
+    id="BuildingB.Floor0"
+/>
+----
+
+Les id doivent correspondre entre les batiments et les étages pour que la navigation se fasse bien (cf partie navigation).

@@ -1,0 +1,123 @@
+= SAÉ Alt 3.01 2022-2023
+:icons: font
+:models: models
+:experimental:
+:incremental:
+:numbered:
+:toc: macro
+:window: _blank
+:correction!:
+
+// Useful definitions
+:asciidoc: http://www.methods.co.nz/asciidoc[AsciiDoc]
+:icongit: icon:git[]
+:git: http://git-scm.com/[{icongit}]
+:plantuml: https://plantuml.com/fr/[plantUML]
+:vscode: https://code.visualstudio.com/[VS Code]
+
+ifndef::env-github[:icons: font]
+// Specific to GitHub
+ifdef::env-github[]
+:correction:
+:!toc-title:
+:caution-caption: :fire:
+:important-caption: :exclamation:
+:note-caption: :paperclip:
+:tip-caption: :bulb:
+:warning-caption: :warning:
+:icongit: Git
+endif::[]
+
+:baseURL: https://github.com/AimvenDragtow/SAE-ALT-S3-Dev-22-23-CaptElec-3A-Equipe-1
+
+// Tags
+image:{baseURL}/actions/workflows/node.js.build.yml/badge.svg[Build] 
+image:{baseURL}/actions/workflows/node.js.run.yml/badge.svg[Run] 
+image:{baseURL}/actions/workflows/node.js.test.yml/badge.svg[Tests] 
+image:https://img.shields.io/badge/license-CC%20BY--NC--ND%204.0-blue[License: CC-BY-NC-ND-4.0, link="http://creativecommons.org/licenses/by-nc-nd/4.0/"]
+//---------------------------------------------------------------
+
+//TIP: Pensez à mettre à jour les infos dans ce fichier pour que les badges pointent sur les résultats effectifs de vos intégrations continue ou sur la bonne licence logicielle.
+
+//Ce fichier `README.adoc` (dont vous lisez sûrement le rendu HTML automatiquement effectué par GitHUb), fait partie du dépôt initial cloné à partir du lien GitHub classroom qui vous a été donné en cours (https://classroom.github.com/a/OUF7gxEa).
+
+toc::[]
+
+== Equipe 1 — 3A
+
+Projet est réalisé par::
+
+- https://github.com/Hugo-CASTELL[Hugo CASTELL] — SCRUM-Master
+- https://github.com/AimvenDragtow[Zakaria BELKHEIRI] — Product Owner
+- https://github.com/enzobxl[Enzo BROUXEL]
+- https://github.com/Paul-Arago[Paul ARAGO]
+- https://github.com/Sonixray[Loan GAYRARD]
+
+
+Tuteur/tutrice enseignant(e) de l'équipe:: mailto:@univ-tlse2.fr[TBA]
+
+== Contexte général
+
+Le but est d’obtenir un site sécurisé par une authentification permettant de se déplacer dans les plans 3D des bâtiments et étages de l'IUT de Blagnac afin de visualiser des données environnementales telles que la consommation électrique, la concentration de CO₂, la température, l'humidité, la luminosité ou même la présence de manière ergonomique par un code couleur et divers paramètres de navigation : temps réel et historique.
+
+Ces paramètres nous sont accessibles via un flux MQTT diffusés par des capteurs de type AM107.
+
+Zainab KAMAL, ingénieure de recherche à l’IUT, est à la racine de l’architecture physique du projet.
+
+[[liensUtiles]]
+=== Liens utiles
+
+- Eslint : https://developer.ibm.com/articles/why-and-how-to-use-eslint-in-your-project/[Pourquoi ESlint] et https://eslint.org/docs/user-guide/getting-started[Documentation]
+- React : https://fr.reactjs.org/docs/getting-started.html[Documentation] et https://projects.wojtekmaj.pl/react-lifecycle-methods-diagram[Diagramme life cycle]
+- Tailwind CSS : https://tailwindcss.com/docs[Documentation librairie]
+- Google Material Icon : https://fonts.google.com/icons?selected=Material+Icons[Icones]
+
+== Réalisations 
+
+//TIP: Mettez ici toutes les informations nécessaire à l'utilisation de votre dépôt (comment on installe votre application, où sont les docs, etc.)
+Vous pourrez retrouver la documentation dans le dossier https://github.com/AimvenDragtow/SAE-ALT-S3-Dev-22-23-CaptElec-3A-Equipe-1/tree/main/documents[documentation]
+
+- https://capt-elec.csorigins.com/
+
+== Gestion de projet & Qualité
+
+//Chaque sprint (semaine) vous devrez livrer une nouvelle version de votre application (release).
+//Utilisez pour cela les fonctionnalités de GitHub pour les https://docs.github.com/en/repositories/releasing-projects-on-github[Releases].
+
+//De plus ce fichier `README.adoc` devra être à jour des informations suivantes :
+
+- Version courante : https://github.com/AimvenDragtow/SAE-ALT-S3-Dev-22-23-CaptElec-3A-Equipe-1/releases/tag/v1.0[v1.0]
+
+- Tableau de projet : https://github.com/users/AimvenDragtow/projects/2[Tâches]
+
+//- Lien vers la doc technique
+- https://github.com/AimvenDragtow/SAE-ALT-S3-Dev-22-23-CaptElec-3A-Equipe-1/blob/main/documents/DocumentationTechnique.adoc[Documentation technique]
+
+//- Lien vers la doc utilisateur
+- https://github.com/AimvenDragtow/SAE-ALT-S3-Dev-22-23-CaptElec-3A-Equipe-1/blob/main/documents/DocumentationUtilisateur.adoc[Documentation utilisateur]
+- https://github.com/AimvenDragtow/SAE-ALT-S3-Dev-22-23-CaptElec-3A-Equipe-1/blob/main/documents/CahierDeTests.adoc[Cahier de tests]
+- https://github.com/AimvenDragtow/SAE-ALT-S3-Dev-22-23-CaptElec-3A-Equipe-1/issues?q=label%3A%22user+story%22[Product Backlogs]
+
+
+=== Évaluations hebdomadaires
+
+NOTE: Les notes ci-dessous sont mises à jour directement par les enseignants responsables.
+
+NOTE: Pour Mme Pendaries, les DAILY SCRUMS et SPRINT REVIEW sont disponibles dans le projet après la colonne DONE dans une colonne dédiée au SCRUM. Hugo CASTELL
+
+ifdef::env-github[]
+endif::[]
+
+ifndef::env-github[]
+++++
+++++
+endif::[]
+
+=== retour semaine 3 EP 
+Backlog produit : Attention vos US ne sont pas formulées comme il faut, la syntaxe est "En tant que .... je veux ... afin de ...". Je dois avoir critères d'acceptabilité  et non d'accessibilité !! . Il me faut aussi les tâches liées (que vous avez appelé critère d'accessibilité d'ailleurs ...
+
+Srint Backlog :  ok mais en faire un par semaine bien identifié
+
+Les liens documentations pointent sur le même fichier de config des capteurs ... ce n'est pas ce qui est demandé.
+Je n'ai pas de cahier de tests.
+Il me manque le CR du sprint semaine 3.

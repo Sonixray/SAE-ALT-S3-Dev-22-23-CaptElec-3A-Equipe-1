@@ -1,0 +1,23 @@
+{
+    "env": {
+        "browser": true,
+        "es2021": true,
+        "node": true
+    },
+    "extends": ["plugin:react/recommended", "airbnb", "prettier"],
+    "overrides": [],
+    "parserOptions": {
+        "ecmaVersion": "latest"
+    },
+    "plugins": ["react", "prettier"],
+    "rules": {
+        "prettier/prettier": [
+            "error",
+            {
+                "endOfLine": "auto"
+            }
+        ],
+        "react/prefer-stateless-function": "off",
+        "react/prop-types": "off"
+    }
+}

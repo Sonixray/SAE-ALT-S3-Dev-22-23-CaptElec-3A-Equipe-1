@@ -1,0 +1,10 @@
+export { default as HomePage } from './Home';
+export { default as AuthPage } from './Auth';
+export { default as LivePage } from './Live';
+export { default as HistoryPage } from './History';
+export { default as ContactPage } from './Contact';
+export { default as TACPage } from './TAC';
+export { default as PrivacyPolicyPage } from './PrivacyPolicy';
+export { default as SettingsPage } from './Settings';
+export { default as Error } from './Error';
+export { default as Error404 } from './Error404';
